@@ -36,16 +36,21 @@ public:
     };
 };
 
-class Ls {
+class Model {
 public:
-    map<int, string> StructDir;
+    vector< vector<string> > StructDir;
+
     /*
      * Create struct for print
-     * Mode | UID | GID | Size | Modify | Time  | Name
+     * Mode | UID | GID | Size | Modify time  | Name
      *
      */
-    create_struct(vector<string> lsdir) {
+    void create_struct(vector<string> lsdir) {
+        struct stat objFile;
+        char * dirnow;
+        char mode[10],uid[5],gid[5],size[100];
         for (int i=0; i<lsdir.size(); i++) {
+            vector<string> line;
             dirnow = new char[lsdir[i].length() + 1];
             strcpy(dirnow, lsdir[i].c_str());
 
@@ -56,40 +61,49 @@ public:
             timeinfo = localtime(&objFile.st_ctime);
             strftime(time,sizeof(time),"%Y-%m-%d %H:%M",timeinfo);
 
+            sprintf(mode, "%lo", (unsigned long)objFile.st_mode);
+            sprintf(uid, "%d", objFile.st_uid);
+            sprintf(gid, "%d", objFile.st_gid);
+            sprintf(size, "%d", (int)objFile.st_size);
+
+            line.push_back(mode);
+            line.push_back(uid);
+            line.push_back(gid);
+            line.push_back(size);
+            line.push_back(time);
+            line.push_back(dirnow);
+
+            StructDir.push_back(line);
+
+            //        printf("%lo \t", (unsigned long)objFile.st_mode);
+            //        printf("%d \t ", objFile.st_uid);
+            //        printf("%d \t ", objFile.st_gid);
+            //        printf("%d \t\t", (int)objFile.st_size);
+            //        printf("%s \t", time);
+            //        printf("%s \n", dirnow);
+
             //sprintf(s_format, "\%%ds", width);
 
         }
-    }
+    };
 };
 
 int main() {
     vector<string> lsdir;
-
-    struct stat objFile;
-    char * dirnow;
+    vector< vector<string> > dir_struct;
 
     ListDir l;
     lsdir = l.createlist();
 
-    printf("Mode\tUID\tGID\tSize\t\tModify Time\tName\n");
+    Model m;
+    m.create_struct(lsdir);
+    dir_struct = m.StructDir;
 
-//    for (int i=0; i<lsdir.size(); i++) {
-//        dirnow = new char[lsdir[i].length() + 1];
-//        strcpy(dirnow, lsdir[i].c_str());
-//
-//        char time[25];
-//        stat(dirnow,&objFile);
-//        struct tm * timeinfo;
-//
-//        timeinfo = localtime(&objFile.st_ctime);
-//        strftime(time,sizeof(time),"%Y-%m-%d %H:%M",timeinfo);
-//
-//        printf("%lo \t", (unsigned long)objFile.st_mode);
-//        printf("%d \t ", objFile.st_uid);
-//        printf("%d \t ", objFile.st_gid);
-//        printf("%d \t\t", (int)objFile.st_size);
-//        printf("%s \t", time);
-//        printf("%s \n", dirnow);
-//
-//    }
+    for (int i=0; i<dir_struct.size(); i++) {
+        for (int j=0; j<dir_struct[i].size(); j++){
+            cout << dir_struct[i][j] << endl;
+            //printf("%s \t", dir_struct[i][j]);
+        }
+        printf("\n");
+    }
 }
