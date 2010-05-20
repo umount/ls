@@ -72,7 +72,9 @@ public:
             timeinfo = localtime(&objFile.st_ctime);
             strftime(time,sizeof(time),"%Y-%m-%d %H:%M",timeinfo);
 
-            sprintf(mode, "%lo", (unsigned long)objFile.st_mode);
+            char mode[BUFSIZ];
+            this->drwx(objFile.st_mode, mode);
+
             sprintf(uid, "%d", objFile.st_uid);
             sprintf(gid, "%d", objFile.st_gid);
             sprintf(size, "%d", (int)objFile.st_size);
@@ -87,15 +89,36 @@ public:
             StructDir.push_back(line);
         }
     };
+
+    /*
+     * drwx permission format
+     *
+     */
+    void drwx(mode_t i, char *buf) {
+        *buf++ = (i & S_IFDIR) ? 'd' : '-';
+        *buf++ = (i & S_IRUSR) ? 'r' : '-';
+        *buf++ = (i & S_IWUSR) ? 'w' : '-';
+        *buf++ = (i & S_IXUSR) ? 'x' : '-';
+        *buf++ = (i & S_IRGRP) ? 'r' : '-';
+        *buf++ = (i & S_IWGRP) ? 'w' : '-';
+        *buf++ = (i & S_IXGRP) ? 'x' : '-';
+        *buf++ = (i & S_IROTH) ? 'r' : '-';
+        *buf++ = (i & S_IWOTH) ? 'w' : '-';
+        *buf++ = (i & S_IXOTH) ? 'x' : '-';
+        *buf = '\0';
+    }
 };
 
 
 class View {
 public:
-    void Print(vector< vector<string> > dir_struct){
+    void print(vector< vector<string> > dir_struct){
         char * print_string;
+        int max_length;
+
         for (int i=0; i<dir_struct.size(); i++) {
             for (int j=0; j<dir_struct[i].size(); j++){
+
                 print_string = new char[dir_struct[i][j].length() + 1];
                 strcpy(print_string, dir_struct[i][j].c_str());
                 printf("%s \t", print_string);
@@ -117,5 +140,5 @@ int main() {
     dir_struct = m.StructDir;
 
     View v;
-    v.Print(dir_struct);
+    v.print(dir_struct);
 }
