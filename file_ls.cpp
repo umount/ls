@@ -49,6 +49,17 @@ public:
         struct stat objFile;
         char * dirnow;
         char mode[10],uid[5],gid[5],size[100];
+        vector<string> head;
+
+        head.push_back("Mode");
+        head.push_back("UID");
+        head.push_back("GID");
+        head.push_back("Size");
+        head.push_back("Modify time");
+        head.push_back("Name");
+
+        StructDir.push_back(head);
+
         for (int i=0; i<lsdir.size(); i++) {
             vector<string> line;
             dirnow = new char[lsdir[i].length() + 1];
