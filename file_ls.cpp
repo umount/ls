@@ -82,10 +82,12 @@ public:
 class View {
 public:
     void Print(vector< vector<string> > dir_struct){
+        char * print_string;
         for (int i=0; i<dir_struct.size(); i++) {
             for (int j=0; j<dir_struct[i].size(); j++){
-                cout << dir_struct[i][j] << endl;
-                //printf("%s \t", dir_struct[i][j]);
+                print_string = new char[dir_struct[i][j].length() + 1];
+                strcpy(print_string, dir_struct[i][j].c_str());
+                printf("%s \t", print_string);
             }
             printf("\n");
         }
