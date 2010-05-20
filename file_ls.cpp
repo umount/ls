@@ -18,7 +18,7 @@
 
 using namespace std;
 
-class ListDir {
+class Controller {
 public:
     vector<string> createlist() {
         vector<string> lsdir;
@@ -74,36 +74,35 @@ public:
             line.push_back(dirnow);
 
             StructDir.push_back(line);
-
-            //        printf("%lo \t", (unsigned long)objFile.st_mode);
-            //        printf("%d \t ", objFile.st_uid);
-            //        printf("%d \t ", objFile.st_gid);
-            //        printf("%d \t\t", (int)objFile.st_size);
-            //        printf("%s \t", time);
-            //        printf("%s \n", dirnow);
-
-            //sprintf(s_format, "\%%ds", width);
-
         }
     };
+};
+
+
+class View {
+public:
+    void Print(vector< vector<string> > dir_struct){
+        for (int i=0; i<dir_struct.size(); i++) {
+            for (int j=0; j<dir_struct[i].size(); j++){
+                cout << dir_struct[i][j] << endl;
+                //printf("%s \t", dir_struct[i][j]);
+            }
+            printf("\n");
+        }
+    }
 };
 
 int main() {
     vector<string> lsdir;
     vector< vector<string> > dir_struct;
 
-    ListDir l;
-    lsdir = l.createlist();
+    Controller c;
+    lsdir = c.createlist();
 
     Model m;
     m.create_struct(lsdir);
     dir_struct = m.StructDir;
 
-    for (int i=0; i<dir_struct.size(); i++) {
-        for (int j=0; j<dir_struct[i].size(); j++){
-            cout << dir_struct[i][j] << endl;
-            //printf("%s \t", dir_struct[i][j]);
-        }
-        printf("\n");
-    }
+    View v;
+    v.Print(dir_struct);
 }
