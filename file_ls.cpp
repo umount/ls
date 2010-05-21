@@ -118,7 +118,7 @@ public:
         char * print_string;
         int width;
         vector<int> maxlen;
-
+        int max_name = 40;
         char s_format[100];
 
         for (int i =0; i<dir_struct[0].size(); i++){
@@ -139,15 +139,23 @@ public:
                 strcpy(print_string, dir_struct[i][j].c_str());
                 width = maxlen[j] - dir_struct[i][j].length();
 
-                sprintf(s_format, "%c%d%c", '%', maxlen[j]+3, 's');
-                //printf(s_format,print_string);
-
-                //sprintf(s_format, "%d", maxlen[j]);
-                //printf("%s", s_format);
+                if (j!=0 && j!=dir_struct[i].size()-1)
+                    sprintf(s_format, "%c%d%c", '%', maxlen[j]+2, 's');
+                else if (j!=dir_struct[i].size()-1)
+                    sprintf(s_format, "%c%d%c", '%', maxlen[j], 's');
+                else {
+                    if (maxlen[j] < max_name)
+                        sprintf(s_format, "%c%d%c", '%', maxlen[j]+3, 's');
+                    else
+                        sprintf(s_format, "%c%d%c", '%', max_name+3, 's');
+                }
                 printf(s_format,print_string);
             }
             printf("\n");
         }
+    }
+    void split_blank (char* &dir_name){
+
     }
 };
 
