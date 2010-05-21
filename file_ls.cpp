@@ -147,7 +147,7 @@ public:
                 else if (j!=dir_struct[i].size()-1)
                     sprintf(s_format, "%c%d%c", '%', maxlen[j], 's');
                 else {
-                    int length_blank = all_length - maxlen[j];                    
+                    int length_blank = all_length - maxlen[j];
                     splitname = this->split_blank(print_string,maxlength_name);
                     for (int i=0; i<splitname.size(); i++) {
                         if (i == 0)
@@ -207,8 +207,6 @@ public:
             new_dir.push_back(temp_string);
         }
         return new_dir;
-
-
     }
 };
 
