@@ -20,8 +20,7 @@ using namespace std;
 
 class Controller {
 public:
-    vector<string> createlist() {
-        vector<string> lsdir;
+    void createlist(vector<string> &lsdir) {
         DIR *curDir = NULL;
         struct dirent *objDir;
 
@@ -32,7 +31,6 @@ public:
         }
         sort(lsdir.begin(), lsdir.end());
         closedir(curDir);
-        return lsdir;
     };
 };
 
@@ -45,7 +43,7 @@ public:
      * Mode | UID | GID | Size | Modify time  | Name
      *
      */
-    void create_struct(vector<string> lsdir) {
+    void create_struct(vector<string> &lsdir) {
         struct stat objFile;
         char * dirnow;
         char mode[10],uid[5],gid[5],size[100];
@@ -112,16 +110,41 @@ public:
 
 class View {
 public:
-    void print(vector< vector<string> > dir_struct){
+    /*
+     * Print structure
+     * maxlen have structure int maxlen_mode,maxlen_uid,maxlen_gid,maxlen_size,maxlen_time,maxlen_name
+     */
+    void print(vector< vector<string> > &dir_struct){
         char * print_string;
-        int max_length;
+        int width;
+        vector<int> maxlen;
+
+        char s_format[100];
+
+        for (int i =0; i<dir_struct[0].size(); i++){
+            maxlen.push_back(0);
+        }
 
         for (int i=0; i<dir_struct.size(); i++) {
             for (int j=0; j<dir_struct[i].size(); j++){
+                if (dir_struct[i][j].length() > maxlen[j]){
+                    maxlen[j] = dir_struct[i][j].length();
+                }
+            }
+        }
 
+        for (int i=0; i<dir_struct.size(); i++) {
+            for (int j=0; j<dir_struct[i].size(); j++){
                 print_string = new char[dir_struct[i][j].length() + 1];
                 strcpy(print_string, dir_struct[i][j].c_str());
-                printf("%s \t", print_string);
+                width = maxlen[j] - dir_struct[i][j].length();
+
+                sprintf(s_format, "%c%d%c", '%', maxlen[j]+3, 's');
+                //printf(s_format,print_string);
+
+                //sprintf(s_format, "%d", maxlen[j]);
+                //printf("%s", s_format);
+                printf(s_format,print_string);
             }
             printf("\n");
         }
@@ -133,7 +156,7 @@ int main() {
     vector< vector<string> > dir_struct;
 
     Controller c;
-    lsdir = c.createlist();
+    c.createlist(lsdir);
 
     Model m;
     m.create_struct(lsdir);
