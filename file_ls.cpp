@@ -118,8 +118,10 @@ public:
         char * print_string;
         int width;
         vector<int> maxlen;
-        int max_name = 40;
+        vector<string> splitname;
+        int maxlength_name = 20;
         char s_format[100];
+        string blank(" "),print_name;
 
         for (int i =0; i<dir_struct[0].size(); i++){
             maxlen.push_back(0);
@@ -134,27 +136,78 @@ public:
         }
 
         for (int i=0; i<dir_struct.size(); i++) {
+            int all_length = 0;
             for (int j=0; j<dir_struct[i].size(); j++){
                 print_string = new char[dir_struct[i][j].length() + 1];
                 strcpy(print_string, dir_struct[i][j].c_str());
                 width = maxlen[j] - dir_struct[i][j].length();
-
+                all_length += maxlen[j]+2;
                 if (j!=0 && j!=dir_struct[i].size()-1)
                     sprintf(s_format, "%c%d%c", '%', maxlen[j]+2, 's');
                 else if (j!=dir_struct[i].size()-1)
                     sprintf(s_format, "%c%d%c", '%', maxlen[j], 's');
                 else {
-                    if (maxlen[j] < max_name)
-                        sprintf(s_format, "%c%d%c", '%', maxlen[j]+3, 's');
-                    else
-                        sprintf(s_format, "%c%d%c", '%', max_name+3, 's');
+                    int length_blank = all_length - maxlen[j];                    
+                    splitname = this->split_blank(print_string,maxlength_name);
+                    for (int i=0; i<splitname.size(); i++) {
+                        if (i == 0)
+                           blank= "  ";
+                        else{
+                           blank= "\n";
+                           for (int i=0; i<length_blank-2; i++) {
+                               blank += ' ';
+                           }
+                        }
+                        print_name = blank + splitname[i];
+                        print_string = new char[print_name.length() + 1];
+                        strcpy(print_string, print_name.c_str());
+                        printf("%s",print_string);
+                    }
                 }
-                printf(s_format,print_string);
+                if (j != dir_struct[i].size()-1) {
+                    printf(s_format,print_string);
+                }
             }
             printf("\n");
         }
     }
-    void split_blank (char* &dir_name){
+
+    /*
+     * Split dir name
+     *
+     * maxlength_name - max length directory name
+     * length_blank - count blank befor begin directory name
+     */
+    vector<string> split_blank (char* &dir_name,int &maxlength_name){
+        char *split;
+        vector<string> dir_split;
+        vector<string> new_dir;
+
+        string temp_string,prev_string;
+
+        split = strtok(dir_name, " ");
+        while (split != NULL) {
+            dir_split.push_back(split);
+            split = strtok(NULL, " ");
+        }
+
+        for (int i=0; i<dir_split.size(); i++) {
+            if (dir_split[i].length() > maxlength_name-1) {
+                new_dir.push_back(dir_split[i]);
+            } else {
+                prev_string = temp_string;
+                temp_string += dir_split[i] + " ";
+                if (temp_string.length() > maxlength_name) {
+                    new_dir.push_back(prev_string);
+                    temp_string.clear();
+                }
+            }
+        }
+        if (!temp_string.empty()) {
+            new_dir.push_back(temp_string);
+        }
+        return new_dir;
+
 
     }
 };
